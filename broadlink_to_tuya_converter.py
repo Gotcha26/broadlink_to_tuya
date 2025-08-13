@@ -112,7 +112,7 @@ def compress(out: io.FileIO, data: bytes, level=2):
         return
 
     predecessors = [(0, None, None)] + [None] * len(data)
-
+	
     def put_edge(cost, length, distance):
         npos = pos + length
         cost += predecessors[pos][0]
@@ -133,7 +133,7 @@ def compress(out: io.FileIO, data: bytes, level=2):
         _, length, distance = predecessors[pos]
         pos -= length
         blocks.append((pos, length, distance))
-
+		
     for pos, length, distance in reversed(blocks):
         if not distance:
             emit_literal_block(out, data[pos:pos + length])
@@ -189,11 +189,12 @@ def process_commands(filename: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Convertisseur de codes Broadlink vers Tuya compressé")
-    parser.add_argument("filename", help="Nom du fichier JSON à traiter")
+    parser.add_argument("source_name", help="Nom du fichier source (suite numérique sans extension ou nom complet)")
+    parser.add_argument("dest_name", nargs="?", help="Nom du fichier destination (optionnel, plus souple)")
     parser.add_argument("--type", required=True, help="Sous-répertoire commun (ex: climate)")
     args = parser.parse_args()
 
-    # Validation de l'argument --type
+									 
     allowed_types = ["climate", "fan", "light", "media_player"]
     if args.type not in allowed_types:
         print(f"\033[91m? Une erreur est détectée : l'argument --type n'accepte que les valeurs {', '.join(allowed_types)}.\033[0m")
@@ -201,13 +202,18 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Vérification de la présence du fichier source AVANT le traitement
-    input_path = Path(SOURCE_DIR) / args.type / args.filename
+    # Gestion du nom source
+    src_file = args.source_name
+    if src_file.isdigit():  # si une suite numérique, on ajoute .json
+        src_file += ".json"
+
+    input_path = Path(SOURCE_DIR) / args.type / src_file
     if not input_path.exists():
         print(f"\033[91m? Une erreur est détectée : le fichier source {input_path} est introuvable.\033[0m")
         print("Fin du processus, rien n'a été effectué.")
         sys.exit(1)
 
-    # Vérification que le fichier source est un JSON valide
+    # Vérification que le fichier source soit un JSON valide
     try:
         with open(input_path, 'r') as f:
             json.load(f)
@@ -217,12 +223,21 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Traitement
-    output_path = Path(DEST_DIR) / args.type / args.filename
-    result = process_commands(str(input_path))
+    # Gestion du nom de destination
+    if args.dest_name:
+        dest_file = args.dest_name
+        if not dest_file.endswith(".json"):
+            dest_file += ".json"
+    else:
+        dest_file = src_file
+
+    output_path = Path(DEST_DIR) / args.type / dest_file
+											  
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
+    result = process_commands(str(input_path))
     with open(output_path, "w") as f:
         f.write(result)
 
-    # Message de succès
+	# Message de succès
     print(f"\033[92m? Succès.\033[0m Votre fichier se trouve à l'emplacement {output_path}")
