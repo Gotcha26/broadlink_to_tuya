@@ -192,8 +192,27 @@ def process_commands(filename: str, controller: str):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Convertisseur de codes Broadlink vers Tuya compressé")
-    parser.add_argument("source_name", help="Nom du fichier source (suite numérique sans extension ou nom complet)")
+    parser = argparse.ArgumentParser(
+        description=(
+            "Convertisseur de codes Broadlink vers Tuya compressé.\n\n"
+            "Fonctionnement :\n"
+            "  Ce script lit un fichier JSON contenant des commandes IR Broadlink,\n"
+            "  les encode et les compresse au format Tuya, puis sauvegarde le résultat\n"
+            "  dans un répertoire sûre de destination.\n\n"
+            "Chemins par défaut :\n"
+            f"  Source : {SOURCE_DIR}<type>/<fichier>.json\n"
+            f"  Destination : {DEST_DIR}<type>/<fichier>.json\n\n"
+            "Arguments :\n"
+            "  source_name : Nom du fichier source (suite numérique ou nom complet)\n"
+            "  dest_name   : Nom du fichier destination (optionnel)\n"
+            "  --type     : Sous-répertoire commun (ex: climate, fan, light, media_player)\n"
+            "  --controller : Type de contrôleur supporté (MQTT ou UFOR11, par défaut UFOR11)\n\n"
+            "Exemple :\n"
+            "  python3 broadlink_to_tuya.py 1293 --type climate --controller MQTT"
+        ),
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument("source_name", help="Nom du fichier source (suite numérique ou nom complet)")
     parser.add_argument("dest_name", nargs="?", help="Nom du fichier destination (optionnel, plus souple)")
     parser.add_argument("--type", required=True, help="Sous-répertoire commun (ex: climate)")
     parser.add_argument("--controller", default="UFOR11", help="Type de contrôleur supporté (MQTT ou UFOR11, par défaut UFOR11)")
