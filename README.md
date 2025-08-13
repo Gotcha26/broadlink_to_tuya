@@ -10,7 +10,7 @@ Spécialement conçu pour [SmartIR](https://github.com/litinoveweedle/SmartIR) a
 Vous n'avez qu'à connaître le code de votre télécommande (voir documentation de SmartIR) et indiquer le type [climate, fan, light, media_player] suivi du controller [MQTT - UFOR11].
 
 ## Usage ##
-1. Doit être installé dans HAOS
+1. Doit être installé depuis HAOS.
 2. Le plugin [Advanced SSH and Web Terminal](https://github.com/hassio-addons/addon-ssh) doit être installé, activé et fonctionnel.
 3. Le plugin HACS [SmartIR - litinoveweedle](https://github.com/litinoveweedle/SmartIR) doit être installé, activé et fonctionnel.
 4. Le librairie Python3 doit être installée.
