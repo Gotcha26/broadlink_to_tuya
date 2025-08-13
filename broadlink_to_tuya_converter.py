@@ -239,7 +239,7 @@ if __name__ == "__main__":
 
     input_path = Path(SOURCE_DIR) / args.type / src_file
     if not input_path.exists():
-        print(f"\033[91m❌ Une erreur est détectée : le fichier source {input_path} est introuvable.\033[0m")
+        print(f"\033[91m✗ Une erreur est détectée : le fichier source {input_path} est introuvable.\033[0m")
         print("Fin du processus, rien n'a été effectué.")
         sys.exit(1)
 
@@ -248,7 +248,7 @@ if __name__ == "__main__":
         with open(input_path, 'r') as f:
             json.load(f)
     except json.JSONDecodeError:
-        print(f"\033[91m❌ Une erreur est détectée : le fichier {input_path} n'est pas un JSON valide.\033[0m")
+        print(f"\033[91m✗ Une erreur est détectée : le fichier {input_path} n'est pas un JSON valide.\033[0m")
         print("Fin du processus, rien n'a été effectué.")
         sys.exit(1)
 
@@ -276,4 +276,4 @@ if __name__ == "__main__":
         f.write(result)
 
     # Message de succès
-    print(f"\033[92m✅ Succès.\033[0m Votre fichier se trouve à l'emplacement {output_path}")
+    print(f"\033[92m✔ Succès.\033[0m Votre fichier se trouve à l'emplacement {output_path}")
