@@ -1,5 +1,10 @@
 # Code original : https://gist.github.com/svyatogor/7839d00303998a9fa37eb48494dd680f?permalink_comment_id=5153002#gistcomment-5153002
 
+# Variables chemins
+SOURCE_DIR = "/config/custom_components/smartir/codes/"
+DEST_DIR = "/config/custom_components/smartir/custom_codes/"
+COMMON_SUBDIR = "climate"  # dernier répertoire identique dans source et destination
+
 import io
 import base64
 import json
@@ -184,5 +189,15 @@ def process_commands(filename: str):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        sys.exit("Usage : python script.py <fichier.json>")
-    print(process_commands(sys.argv[1]))
+        sys.exit("Usage : python script.py <nom_fichier.json>")
+
+    input_path = Path(SOURCE_DIR) / COMMON_SUBDIR / sys.argv[1]
+    output_path = Path(DEST_DIR) / COMMON_SUBDIR / sys.argv[1]
+
+    result = process_commands(str(input_path))
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(output_path, "w") as f:
+        f.write(result)
+
+    print(f"Fichier traité et enregistré dans : {output_path}")
