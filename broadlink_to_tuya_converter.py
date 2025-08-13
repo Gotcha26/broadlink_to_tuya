@@ -12,6 +12,7 @@ import base64
 import json
 import sys
 import argparse
+import re
 from bisect import bisect
 from struct import pack, unpack
 from math import ceil
@@ -20,6 +21,17 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Constantes
 BRDLNK_UNIT = 269 / 8192  # Broadlink timing unit (~32.84 µs)
+
+# --- Détection de chaîne base64 Broadlink plausible ---
+_b64_re = re.compile(r'^[A-Za-z0-9+/]+={0,2}$')
+def looks_like_base64_broadlink(s: str) -> bool:
+    if not isinstance(s, str):
+        return False
+    if len(s) < 8:
+        return False
+    if len(s) % 4 != 0 and '=' not in s:
+        return False
+    return bool(_b64_re.match(s))
 
 # MAIN API
 filter_ir = lambda x: [i for i in x if i < 65535]  # évite les valeurs Broadlink inutiles
@@ -162,11 +174,15 @@ def get_raw_from_broadlink(string: str):
     return dec
 
 
+# --- Nouvelle version avec filtrage "base64 plausible" ---
 def process_commands_recursively(commands):
     processed = {}
     for key, value in commands.items():
         if isinstance(value, str):
-            processed[key] = encode_ir(value)
+            if looks_like_base64_broadlink(value):
+                processed[key] = encode_ir(value)
+            else:
+                processed[key] = value
         elif isinstance(value, dict):
             processed[key] = process_commands_recursively(value)
         else:
