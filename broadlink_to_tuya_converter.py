@@ -174,7 +174,7 @@ def process_commands_recursively(commands):
     return processed
 
 
-def process_commands(filename: str):
+def process_commands(filename: str, controller: str):
     file_path = Path(filename)
     if not file_path.exists():
         sys.exit(f"Erreur : fichier introuvable -> {file_path}")
@@ -186,7 +186,7 @@ def process_commands(filename: str):
         sys.exit(f"Erreur JSON : {e}")
 
     data['commands'] = process_commands_recursively(data.get('commands', {}))
-    data['supportedController'] = 'MQTT'
+    data['supportedController'] = controller
     data['commandsEncoding'] = 'Raw'
     return json.dumps(data, indent=2)
 
@@ -196,7 +196,15 @@ if __name__ == "__main__":
     parser.add_argument("source_name", help="Nom du fichier source (suite numérique sans extension ou nom complet)")
     parser.add_argument("dest_name", nargs="?", help="Nom du fichier destination (optionnel, plus souple)")
     parser.add_argument("--type", required=True, help="Sous-répertoire commun (ex: climate)")
+    parser.add_argument("--controller", default="UFOR11", help="Type de contrôleur supporté (MQTT ou UFOR11, par défaut UFOR11)")
     args = parser.parse_args()
+
+    # Normalisation insensible à la casse
+    controller = args.controller.upper()
+    if controller not in ["MQTT", "UFOR11"]:
+        print(f"\033[91m❌ Erreur : --controller doit être MQTT ou UFOR11.\033[0m")
+        sys.exit(1)
+
     # Validation de l'argument --type
     allowed_types = ["climate", "fan", "light", "media_player"]
     if args.type not in allowed_types:
@@ -244,7 +252,7 @@ if __name__ == "__main__":
             sys.exit(0)
 
     # Traitement
-    result = process_commands(str(input_path))
+    result = process_commands(str(input_path), controller=controller)
     with open(output_path, "w") as f:
         f.write(result)
 
