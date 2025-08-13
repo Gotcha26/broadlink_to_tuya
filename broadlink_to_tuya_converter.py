@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 # Variables chemins fixes
 SOURCE_DIR = "/config/custom_components/smartir/codes/"
 DEST_DIR = "/config/custom_components/smartir/custom_codes/"
@@ -13,6 +16,7 @@ from bisect import bisect
 from struct import pack, unpack
 from math import ceil
 from pathlib import Path
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Constantes
 BRDLNK_UNIT = 269 / 8192  # Broadlink timing unit (~32.84 µs)
@@ -196,7 +200,7 @@ if __name__ == "__main__":
     # Validation de l'argument --type
     allowed_types = ["climate", "fan", "light", "media_player"]
     if args.type not in allowed_types:
-        print(f"\033[91m? Une erreur est détectée : l'argument --type n'accepte que les valeurs {', '.join(allowed_types)}.\033[0m")
+        print(f"\033[91m❌ Une erreur est détectée : l'argument --type n'accepte que les valeurs {', '.join(allowed_types)}.\033[0m")
         print("Fin du processus, rien n'a été effectué.")
         sys.exit(1)
 
@@ -208,7 +212,7 @@ if __name__ == "__main__":
 
     input_path = Path(SOURCE_DIR) / args.type / src_file
     if not input_path.exists():
-        print(f"\033[91m? Une erreur est détectée : le fichier source {input_path} est introuvable.\033[0m")
+        print(f"\033[91m❌ Une erreur est détectée : le fichier source {input_path} est introuvable.\033[0m")
         print("Fin du processus, rien n'a été effectué.")
         sys.exit(1)
 
@@ -217,7 +221,7 @@ if __name__ == "__main__":
         with open(input_path, 'r') as f:
             json.load(f)
     except json.JSONDecodeError:
-        print(f"\033[91m? Une erreur est détectée : le fichier {input_path} n'est pas un JSON valide.\033[0m")
+        print(f"\033[91m❌ Une erreur est détectée : le fichier {input_path} n'est pas un JSON valide.\033[0m")
         print("Fin du processus, rien n'a été effectué.")
         sys.exit(1)
 
@@ -234,7 +238,7 @@ if __name__ == "__main__":
 
     # ? Sécurité : prévenir en cas d'écrasement
     if output_path.exists():
-        response = input(f"\033[93m? Le fichier de destination {output_path} existe déjà. Voulez-vous l'écraser ? (oui/non) \033[0m").strip().lower()
+        response = input(f"\033[93m⚠ Le fichier de destination {output_path} existe déjà. Voulez-vous l'écraser ? (oui/non) \033[0m").strip().lower()
         if response not in ["oui", "o", "yes", "y"]:
             print("\033[91mRien n'a été fait.\033[0m")
             sys.exit(0)
@@ -245,4 +249,4 @@ if __name__ == "__main__":
         f.write(result)
 
     # Message de succès
-    print(f"\033[92m? Succès.\033[0m Votre fichier se trouve à l'emplacement {output_path}")
+    print(f"\033[92m✅ Succès.\033[0m Votre fichier se trouve à l'emplacement {output_path}")
