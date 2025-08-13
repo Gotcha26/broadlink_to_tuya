@@ -205,8 +205,8 @@ if __name__ == "__main__":
             "Arguments :\n"
             "  source_name : Nom du fichier source (suite numérique ou nom complet)\n"
             "  dest_name   : Nom du fichier destination (optionnel)\n"
-            "  --type     : Sous-répertoire commun (ex: climate, fan, light, media_player)\n"
-            "  --controller : Type de contrôleur supporté (MQTT ou UFOR11, par défaut UFOR11)\n\n"
+            "  --type     : Sous-répertoire commun (climate, fan, light, media_player)\n"
+            "  --controller : Type de contrôleur supporté (MQTT ou UFOR11)\n\n"
             "Exemple :\n"
             "  python3 broadlink_to_tuya.py 1293 --type climate --controller MQTT"
         ),
@@ -214,22 +214,22 @@ if __name__ == "__main__":
     )
     parser.add_argument("source_name", help="Nom du fichier source (suite numérique ou nom complet)")
     parser.add_argument("dest_name", nargs="?", help="Nom du fichier destination (optionnel, plus souple)")
-    parser.add_argument("--type", required=True, help="Sous-répertoire commun (ex: climate)")
-    parser.add_argument("--controller", default="UFOR11", help="Type de contrôleur supporté (MQTT ou UFOR11, par défaut UFOR11)")
+    parser.add_argument(
+        "--type",
+        required=True,
+        choices=["climate", "fan", "light", "media_player"],
+        help="Sous-répertoire commun"
+    )
+    parser.add_argument(
+        "--controller",
+        required=True,
+        choices=["MQTT", "UFOR11"],
+        help="Type de contrôleur supporté"
+    )
     args = parser.parse_args()
 
     # Normalisation insensible à la casse
     controller = args.controller.upper()
-    if controller not in ["MQTT", "UFOR11"]:
-        print(f"\033[91m❌ Erreur : --controller doit être MQTT ou UFOR11.\033[0m")
-        sys.exit(1)
-
-    # Validation de l'argument --type
-    allowed_types = ["climate", "fan", "light", "media_player"]
-    if args.type not in allowed_types:
-        print(f"\033[91m❌ Une erreur est détectée : l'argument --type n'accepte que les valeurs {', '.join(allowed_types)}.\033[0m")
-        print("Fin du processus, rien n'a été effectué.")
-        sys.exit(1)
 
     # Vérification de la présence du fichier source AVANT le traitement
     # Gestion du nom source
@@ -239,7 +239,7 @@ if __name__ == "__main__":
 
     input_path = Path(SOURCE_DIR) / args.type / src_file
     if not input_path.exists():
-        print(f"\033[91m❌ Une erreur est détectée : le fichier source {input_path} est introuvable.\033[0m")
+        print(f"\033[91m✗ Une erreur est détectée : le fichier source {input_path} est introuvable.\033[0m")
         print("Fin du processus, rien n'a été effectué.")
         sys.exit(1)
 
@@ -248,7 +248,7 @@ if __name__ == "__main__":
         with open(input_path, 'r') as f:
             json.load(f)
     except json.JSONDecodeError:
-        print(f"\033[91m❌ Une erreur est détectée : le fichier {input_path} n'est pas un JSON valide.\033[0m")
+        print(f"\033[91m✗ Une erreur est détectée : le fichier {input_path} n'est pas un JSON valide.\033[0m")
         print("Fin du processus, rien n'a été effectué.")
         sys.exit(1)
 
@@ -276,4 +276,4 @@ if __name__ == "__main__":
         f.write(result)
 
     # Message de succès
-    print(f"\033[92m✅ Succès.\033[0m Votre fichier se trouve à l'emplacement {output_path}")
+    print(f"\033[92m✔ Succès.\033[0m Votre fichier se trouve à l'emplacement {output_path}")
