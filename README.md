@@ -1,5 +1,5 @@
 # broadlink_to_tuya
-## _MON script de convertion **broadlink_to_tuya.sh**_
+## _Mon script de convertion **broadlink_to_tuya.sh**_
 _✌️🥖🔆Fait avec amour dans le sud de la France.❤️️🇫🇷🐓_
 
 Juste un script qui permet de convertir des codes de télécommandes encodés en Broadlink vers Tuya.
@@ -26,6 +26,10 @@ wget -O /config/scripts/broadlink_to_tuya/broadlink_to_tuya_converter.py \
 https://raw.githubusercontent.com/Gotcha26/broadlink_to_tuya/main/broadlink_to_tuya_converter.py
 ```
 
+## Utilisation - Exemple type ##
+Depuis la fenêtre de terminal dans HAOS.  
+`python3 /config/scripts/broadlink_to_tuya/broadlink_to_tuya_converter.py 1293 --type climate --controller UFOR11`
+
 ## Aide ##
 Depuis la fenêtre de terminal dans HAOS.  
 `/config/scripts/broadlink_to_tuya/broadlink_to_tuya.sh --help`
@@ -38,8 +42,8 @@ Depuis la fenêtre de terminal dans HAOS.
 >   dans un répertoire sûre de destination.
 > 
 > Chemins par défaut :
->   Source : /config/custom_components/smartir/codes/<type>/<fichier>.json
->   Destination : /config/custom_components/smartir/custom_codes/<type>/<fichier>.json
+>   Source : /config/custom_components/smartir/codes/\<type\>/\<fichier\>.json
+>   Destination : /config/custom_components/smartir/custom_codes/\<type\>/\<fichier\>.json
 > 
 > Arguments :
 >   source_name : Nom du fichier source (suite numérique ou nom complet)
@@ -60,10 +64,6 @@ Depuis la fenêtre de terminal dans HAOS.
 >                         Sous-répertoire commun
 >   --controller {MQTT,UFOR11}
 >                         Type de contrôleur supporté
-
-## Utilisation - Exemple type ##
-Depuis la fenêtre de terminal dans HAOS.  
-`python3 /config/scripts/broadlink_to_tuya/broadlink_to_tuya_converter.py 1293 --type climate --controller UFOR11`
 
 #### Origine ####
 Le script original se trouve à [cette adresse](https://gist.github.com/svyatogor/7839d00303998a9fa37eb48494dd680f?permalink_comment_id=5153002#gistcomment-5153002).
