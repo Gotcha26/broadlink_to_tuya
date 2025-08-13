@@ -193,6 +193,13 @@ if __name__ == "__main__":
     parser.add_argument("--type", required=True, help="Sous-répertoire commun (ex: climate)")
     args = parser.parse_args()
 
+    # ? Validation de l'argument --type
+    allowed_types = ["climate", "fan", "light", "media_player"]
+    if args.type not in allowed_types:
+        print(f"\033[91m? Une erreur est détectée : l'argument --type n'accepte que les valeurs {', '.join(allowed_types)}.\033[0m")
+        print("Fin du processus, rien n'a été effectué.")
+        sys.exit(1)
+
     input_path = Path(SOURCE_DIR) / args.type / args.filename
     output_path = Path(DEST_DIR) / args.type / args.filename
 
