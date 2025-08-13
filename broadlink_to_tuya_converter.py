@@ -1,14 +1,14 @@
-# Code original : https://gist.github.com/svyatogor/7839d00303998a9fa37eb48494dd680f?permalink_comment_id=5153002#gistcomment-5153002
-
-# Variables chemins
+# Variables chemins fixes
 SOURCE_DIR = "/config/custom_components/smartir/codes/"
 DEST_DIR = "/config/custom_components/smartir/custom_codes/"
-COMMON_SUBDIR = "climate"  # dernier répertoire identique dans source et destination
+
+# Code original : https://gist.github.com/svyatogor/7839d00303998a9fa37eb48494dd680f?permalink_comment_id=5153002#gistcomment-5153002
 
 import io
 import base64
 import json
 import sys
+import argparse
 from bisect import bisect
 from struct import pack, unpack
 from math import ceil
@@ -188,11 +188,13 @@ def process_commands(filename: str):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        sys.exit("Usage : python script.py <nom_fichier.json>")
+    parser = argparse.ArgumentParser(description="Convertisseur de codes Broadlink vers Tuya compressé")
+    parser.add_argument("filename", help="Nom du fichier JSON à traiter")
+    parser.add_argument("--type", required=True, help="Sous-répertoire commun (ex: climate)")
+    args = parser.parse_args()
 
-    input_path = Path(SOURCE_DIR) / COMMON_SUBDIR / sys.argv[1]
-    output_path = Path(DEST_DIR) / COMMON_SUBDIR / sys.argv[1]
+    input_path = Path(SOURCE_DIR) / args.type / args.filename
+    output_path = Path(DEST_DIR) / args.type / args.filename
 
     result = process_commands(str(input_path))
     output_path.parent.mkdir(parents=True, exist_ok=True)
